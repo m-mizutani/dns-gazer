@@ -22,7 +22,7 @@ Options:
 Quick start
 ----------
 
-Assume following
+Assume following,
 
 - You have fluentd process on `localhost` and port `24224`
 - You want to monitor on network interface `eth0`
@@ -32,6 +32,39 @@ Then,
 ```shell
 $ dns-gazer -i eth0 -f localhost:24224
 ```
+
+Then, fluentd receives following logs.
+
+```
+2017-12-21 17:58:00.000000000 +0900 dns-gazer.dns.tx: {
+  "client_addr": "192.168.102.48",
+  "client_port": 7241,
+  "query": {
+    "0": {
+      "name": "aws.amazon.com.",
+      "section": "question",
+      "type": "A"
+    }
+  },
+  "query_ts": 1513846680.229464,
+  "reply": {
+    "0": {
+      "data": "54.239.26.209",
+      "name": "aws.amazon.com.",
+      "section": "answer",
+      "type": "A"
+    }
+  },
+  "reply_ts": 1513846680.232027,
+  "server_addr": "192.168.100.32",
+  "server_port": 53,
+  "status": "success",
+  "tx_id": 30826
+}
+```
+
+(Pretty printed for readability)
+
 
 Setup
 ----------
