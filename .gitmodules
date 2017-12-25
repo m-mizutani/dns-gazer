@@ -1,9 +1,9 @@
 [submodule "external/packetmachine"]
 	path = external/packetmachine
-	url = git@github.com:m-mizutani/packetmachine.git
+	url = https://github.com/m-mizutani/packetmachine.git
 [submodule "external/libfluent"]
 	path = external/libfluent
-	url = git@github.com:m-mizutani/libfluent.git
+	url = https://github.com/m-mizutani/libfluent.git
 [submodule "external/cpp-toolbox"]
 	path = external/cpp-toolbox
-	url = git@github.com:m-mizutani/cpp-toolbox
+	url = https://github.com/m-mizutani/cpp-toolbox
