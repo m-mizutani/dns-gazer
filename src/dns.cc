@@ -99,7 +99,7 @@ void Receiver::recv(const pm::Property& p) {
     // Query
     auto node = this->cache_.get(*key); // If exists, auto upadted
     if (node.is_null()) {
-      msg = this->logger_->retain_message("banshee.dns.tx");
+      msg = this->logger_->retain_message("dns-gazer.dns.tx");
       msg->set_ts(p.ts());
 
       this->build_message(msg, p);
@@ -115,7 +115,7 @@ void Receiver::recv(const pm::Property& p) {
       this->cache_.remove(*key);
       this->build_message(msg, p);
     } else {
-      msg = this->logger_->retain_message("banshee.dns.tx");
+      msg = this->logger_->retain_message("dns-gazer.dns.tx");
       msg->set_ts(p.ts());
       this->build_message(msg, p, true);  // without_query = true
     }
