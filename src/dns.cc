@@ -63,7 +63,17 @@ Receiver::Receiver(const pm::Machine& machine, fluent::Logger *logger) :
   this->ipv4_src_ = machine.lookup_param_key("IPv4.src");
   this->ipv4_dst_ = machine.lookup_param_key("IPv4.dst");
   this->is_query_ = machine.lookup_param_key("DNS.is_query");
-  
+
+
+  auto push_record_param_key = [&](const std::string& tgt) {
+    auto pid = machine.lookup_param_key(tgt);
+    auto tp = new Target(tgt.substr(4), pid);
+    this->targets_.push_back(tp);
+  };
+  push_record_param_key("DNS.question");
+  push_record_param_key("DNS.answer");
+  push_record_param_key("DNS.authority");
+  push_record_param_key("DNS.additional");
 }
 
 void Receiver::recv(const pm::Property& p) {

@@ -30,7 +30,7 @@ class Key : public tb::HashKey {
 
 struct Target {
   const std::string name_;
-  const pm::ParamKey& pid_;
+  const pm::ParamKey pid_;
   Target(const std::string &name, pm::ParamKey& pid) :
       name_(name), pid_(pid) {}
 };
