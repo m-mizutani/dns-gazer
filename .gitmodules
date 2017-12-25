@@ -4,3 +4,6 @@
 [submodule "external/libfluent"]
 	path = external/libfluent
 	url = git@github.com:m-mizutani/libfluent.git
+[submodule "external/cpp-toolbox"]
+	path = external/cpp-toolbox
+	url = git@github.com:m-mizutani/cpp-toolbox

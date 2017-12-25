@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
   auto logger = new fluent::Logger();
   logger->new_forward("localhost", 24224);
 
-  auto dns = new dns::Receiver(logger);
+  auto dns = new dns::Receiver(*machine, logger);
   
   machine->on("DNS", [&](const pm::Property& p) {
       dns->recv(p);

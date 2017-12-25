@@ -40,6 +40,13 @@ ENDIF()
 FILE(GLOB BASESRCS
 	"src/gazer.cc"
 	"src/dns.cc"	"src/dns.hpp"	
+	"src/optparse.cc"	"src/optparse.hpp"
+
+	"./external/cpp-toolbox/src/buffer.cc"
+	"./external/cpp-toolbox/src/buffer.hpp"
+	"./external/cpp-toolbox/src/hash.cc"
+	"./external/cpp-toolbox/src/hash.hpp"
+	"./external/cpp-toolbox/src/cache.h"
 )
 
 # Application (CLI) code
