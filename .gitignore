@@ -4,3 +4,5 @@ Makefile
 bin/
 cmake_install.cmake
 lib/
+.cache
+**/__pycache__
