@@ -1,0 +1,6 @@
+[submodule "external/packetmachine"]
+	path = external/packetmachine
+	url = git@github.com:m-mizutani/packetmachine.git
+[submodule "external/libfluent"]
+	path = external/libfluent
+	url = git@github.com:m-mizutani/libfluent.git
