@@ -1,6 +1,7 @@
 #include <packetmachine.hpp>
 #include <fluent.hpp>
 
+#include "optparse.hpp"
 #include "dns.hpp"
 
 int main(int argc, char* argv[]) {
