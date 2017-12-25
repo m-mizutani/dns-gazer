@@ -39,6 +39,7 @@ ENDIF()
 
 FILE(GLOB BASESRCS
 	"src/gazer.cc"
+	"src/dns.cc"	"src/dns.hpp"	
 )
 
 # Application (CLI) code
