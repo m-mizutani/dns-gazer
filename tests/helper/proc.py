@@ -13,4 +13,4 @@ def run(args):
 
     outs, errs = proc.communicate()
 
-    return outs
+    return outs, proc.pid

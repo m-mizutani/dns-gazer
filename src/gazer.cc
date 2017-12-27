@@ -2,6 +2,7 @@
 #include <fluent.hpp>
 
 #include "optparse.hpp"
+#include "utils.hpp"
 #include "dns.hpp"
 
 
@@ -15,9 +16,10 @@ int main(int argc, char* argv[]) {
   psr.add_option("-f").dest("fluentd")
       .help("Fluentd destination, e.g. 127.0.0.1:24224");
   psr.add_option("-o").dest("output").help("Log file path, '-' is stdout");
+  psr.add_option("-p").dest("pid_path").help("pid file path");
   psr.add_option("-v").dest("version").action("store_true")
       .help("Show version");
-
+  
 
   auto opt = psr.parse_args(argc, argv);
   std::vector <std::string> args = psr.args();
@@ -73,6 +75,10 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  if (opt.is_set("pid_path")) {
+    gazer::create_pid_file(opt["pid_path"]);
+  }
+  
   // Creating DNS packet receiver.
   auto dns = new dns::Receiver(*machine, logger);
   

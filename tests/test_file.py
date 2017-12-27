@@ -7,7 +7,7 @@ import helper.proc
 
 
 def test_output_to_stdout():
-    out = helper.proc.run(['-o', '-'])
+    out, pid = helper.proc.run(['-o', '-'])
     bs = io.BytesIO(out)
 
     # Get first message from iterator.
@@ -22,7 +22,7 @@ def test_output_to_file():
     tfd, tpath = tempfile.mkstemp()
     os.close(tfd)
 
-    out = helper.proc.run(['-o', tpath])
+    out, pid = helper.proc.run(['-o', tpath])
     msg = next(msgpack.Unpacker(open(tpath, 'rb')))
 
     assert out == b''

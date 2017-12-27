@@ -9,7 +9,7 @@ def test_output_to_fluentd():
     
     port = 34334
     server = helper.tcp_server.Proc(port)
-    out = helper.proc.run(['-f', 'localhost:{}'.format(port)])
+    pout, pid = helper.proc.run(['-f', 'localhost:{}'.format(port)])
     out = server.kill()
 
     # Get first message from iterator.
