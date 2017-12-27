@@ -6,7 +6,7 @@
 namespace gazer {
 
 void create_pid_file(const std::string& fpath);
-void goto_daemon();
+void demonize();
 
 }   // namespace gazer
 

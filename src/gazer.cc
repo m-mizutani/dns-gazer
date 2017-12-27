@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
       .help("Fluentd destination, e.g. 127.0.0.1:24224");
   psr.add_option("-o").dest("output").help("Log file path, '-' is stdout");
   psr.add_option("-p").dest("pid_path").help("pid file path");
+  psr.add_option("-d").dest("demon_mode").action("store_true").help("Enable demon mode");
   psr.add_option("-v").dest("version").action("store_true")
       .help("Show version");
   
@@ -24,6 +25,12 @@ int main(int argc, char* argv[]) {
   auto opt = psr.parse_args(argc, argv);
   std::vector <std::string> args = psr.args();
 
+  // Demonize at first if needed
+  if (opt.get("demon_mode")) {
+    gazer::demonize();
+  }
+
+  
   auto machine = new pm::Machine();
   auto logger = new fluent::Logger();
 
