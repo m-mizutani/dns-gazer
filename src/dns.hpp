@@ -7,8 +7,9 @@ namespace dns {
 struct Target {
   const std::string name_;
   const pm::ParamKey pid_;
-  Target(const std::string &name, pm::ParamKey& pid) :
-      name_(name), pid_(pid) {}
+  Target(const pm::Machine& machine, const std::string &name) :
+      name_(name.substr(4)), pid_(machine.lookup_param_key(name)) {
+  }
 };
 
 struct ParamKeySet {
@@ -48,14 +49,17 @@ class Key : public tb::HashKey {
 
 class Receiver {
  private:
+  typedef std::vector<Target*> Targets;
+  
   const ParamKeySet key_set_;
-  std::vector<Target*> targets_;
+  Targets targets_;
   fluent::Logger *logger_;
   tb::LruHash<fluent::Message*> cache_;
   time_t prev_ts_;
 
-  void build_message(fluent::Message* msg, const pm::Property& p,
-                     const ParamKeySet& pks, bool without_query = false);
+  static void build_message(fluent::Message* msg, const pm::Property& p,
+                            const ParamKeySet& pks, const Targets& targets,
+                            bool without_query = false);
   
  public:
   Receiver(const pm::Machine& machine, fluent::Logger* logger);
