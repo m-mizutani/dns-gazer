@@ -52,10 +52,54 @@ void Receiver::build_message(fluent::Message* msg, const pm::Property& p,
 }
 
 
+void Receiver::log_record(fluent::Logger *logger, const pm::Property& p,
+                          const ParamKeySet& pks, const Targets& targets) {
+
+  for (const auto& tgt : targets) {
+    if (p.has_value(tgt->pid_)) {
+      auto& arr =
+          dynamic_cast<const pm::value::Array&>(p.value(tgt->pid_));
+      
+      for (size_t i = 0; i < arr.size(); i++) {
+        auto& rec = arr.get(i);
+        auto msg = logger->retain_message("dns-gazer.dns.record");
+        auto is_query = (p.value(pks.is_query_).uint() == 1);
+
+        msg->set("tx_id", p.value(pks.tx_id_).uint());
+        msg->set("section", tgt->name_);
+        msg->set("name", rec.find("name").repr());
+        msg->set("type", rec.find("type").repr());
+        
+        const auto& rec_data = rec.find("data");
+        if (!rec_data.is_null()) {
+          msg->set("data", rec_data.repr());
+        }
+        
+        if (is_query) {
+          msg->set("type", "query");
+          msg->set("client_addr", p.value(pks.ipv4_src_).ip4());
+          msg->set("server_addr", p.value(pks.ipv4_dst_).ip4());
+          msg->set("client_port", p.src_port());
+          msg->set("server_port", p.dst_port());
+        } else {
+          msg->set("type", "reply");
+          msg->set("client_addr", p.value(pks.ipv4_dst_).ip4());
+          msg->set("server_addr", p.value(pks.ipv4_src_).ip4());
+          msg->set("client_port", p.dst_port());
+          msg->set("server_port", p.src_port());
+        }
+
+        logger->emit(msg);
+      }
+    }
+  }
+}
+
 
 
 Receiver::Receiver(const pm::Machine& machine, fluent::Logger *logger) :
-    key_set_(machine), logger_(logger), cache_(600), prev_ts_(0)
+    key_set_(machine), logger_(logger), cache_(600), prev_ts_(0),
+    logging_record_(false)
 {
   this->targets_.push_back(new Target(machine, "DNS.question"));
   this->targets_.push_back(new Target(machine, "DNS.answer"));
@@ -70,7 +114,7 @@ void Receiver::recv(const pm::Property& p) {
 
   auto is_query = (p.value(this->key_set_.is_query_).uint() == 1);
   auto key = new Key(p, this->key_set_);
-                         
+
   // search expired query
   if (this->prev_ts_ > 0 && p.ts() > this->prev_ts_) {
     this->cache_.step(p.ts() - this->prev_ts_);
@@ -84,6 +128,7 @@ void Receiver::recv(const pm::Property& p) {
   fluent::Message *msg = nullptr;
 
   if (is_query) {
+    
     // Query
     auto node = this->cache_.get(*key); // If exists, auto upadted
     if (node.is_null()) {
@@ -95,6 +140,7 @@ void Receiver::recv(const pm::Property& p) {
       msg = nullptr;
     }
   } else {
+    
     // Reply
     if (this->cache_.has(*key)) {
       auto dn = this->cache_.get(*key);
@@ -114,7 +160,9 @@ void Receiver::recv(const pm::Property& p) {
     this->logger_->emit(msg);
   }
 
-  
+  if (this->logging_record_) {
+    
+  }
   
   delete key;  
 }

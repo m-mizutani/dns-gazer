@@ -17,7 +17,10 @@ int main(int argc, char* argv[]) {
       .help("Fluentd destination, e.g. 127.0.0.1:24224");
   psr.add_option("-o").dest("output").help("Log file path, '-' is stdout");
   psr.add_option("-p").dest("pid_path").help("pid file path");
-  psr.add_option("-d").dest("demon_mode").action("store_true").help("Enable demon mode");
+  psr.add_option("-d").dest("demon_mode").action("store_true")
+      .help("Enable demon mode");
+  psr.add_option("-R").dest("log_record").action("store_true")
+      .help("Enable logging per record");
   psr.add_option("-v").dest("version").action("store_true")
       .help("Show version");
   
@@ -88,6 +91,11 @@ int main(int argc, char* argv[]) {
   
   // Creating DNS packet receiver.
   auto dns = new dns::Receiver(*machine, logger);
+
+  if (opt.is_set("log_record") && opt.get("log_record")) {
+    dns->set_logging_record(true);
+  }
+
   
   machine->on("DNS", [&](const pm::Property& p) {
       dns->recv(p);

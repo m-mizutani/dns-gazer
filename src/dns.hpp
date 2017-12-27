@@ -56,14 +56,19 @@ class Receiver {
   fluent::Logger *logger_;
   tb::LruHash<fluent::Message*> cache_;
   time_t prev_ts_;
-
+  bool logging_record_;
+  
   static void build_message(fluent::Message* msg, const pm::Property& p,
                             const ParamKeySet& pks, const Targets& targets,
                             bool without_query = false);
+  static void log_record(fluent::Logger *logger, const pm::Property& p,
+                         const ParamKeySet& pks, const Targets& targets);
   
  public:
   Receiver(const pm::Machine& machine, fluent::Logger* logger);
-  void recv(const pm::Property& p);  
+  void recv(const pm::Property& p);
+  bool logging_record() const { return this->logging_record_; }
+  void set_logging_record(bool v) { this->logging_record_ = v; }
 };
 
 }
