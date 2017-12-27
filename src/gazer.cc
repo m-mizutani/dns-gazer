@@ -92,8 +92,9 @@ int main(int argc, char* argv[]) {
   // Creating DNS packet receiver.
   auto dns = new dns::Receiver(*machine, logger);
 
-  if (opt.is_set("log_record") && opt.get("log_record")) {
-    dns->set_logging_record(true);
+  // Enable per record logging
+  if (opt.is_set("log_record")) {
+    dns->set_logging_record(opt.get("log_record"));
   }
 
   

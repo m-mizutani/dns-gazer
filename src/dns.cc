@@ -76,13 +76,13 @@ void Receiver::log_record(fluent::Logger *logger, const pm::Property& p,
         }
         
         if (is_query) {
-          msg->set("type", "query");
+          msg->set("msg_type", "query");
           msg->set("client_addr", p.value(pks.ipv4_src_).ip4());
           msg->set("server_addr", p.value(pks.ipv4_dst_).ip4());
           msg->set("client_port", p.src_port());
           msg->set("server_port", p.dst_port());
         } else {
-          msg->set("type", "reply");
+          msg->set("msg_type", "reply");
           msg->set("client_addr", p.value(pks.ipv4_dst_).ip4());
           msg->set("server_addr", p.value(pks.ipv4_src_).ip4());
           msg->set("client_port", p.dst_port());
@@ -161,7 +161,7 @@ void Receiver::recv(const pm::Property& p) {
   }
 
   if (this->logging_record_) {
-    
+    log_record(this->logger_, p, this->key_set_, this->targets_);
   }
   
   delete key;  
