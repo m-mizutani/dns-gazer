@@ -15,7 +15,10 @@ int main(int argc, char* argv[]) {
   psr.add_option("-i").dest("interface").help("capture interface");
   psr.add_option("-f").dest("fluentd")
       .help("Fluentd destination, e.g. 127.0.0.1:24224");
-  psr.add_option("-o").dest("output").help("Log file path, '-' is stdout");
+  psr.add_option("-o").dest("output")
+      .help("Output to a file as msgpack foramt, '-' is stdout");
+  psr.add_option("-t").dest("text_output")
+      .help("Output to a file as text foramt, '-' is stdout");
   psr.add_option("-p").dest("pid_path").help("pid file path");
   psr.add_option("-d").dest("demon_mode").action("store_true")
       .help("Enable demon mode");
@@ -63,6 +66,15 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  if (opt.is_set("text_output")) {
+    auto& fpath = opt["text_output"];
+    if (fpath == "-") {
+      logger->new_textfile(1); // stdout
+    } else {
+      logger->new_textfile(fpath);
+    }
+  }
+  
   // Configuring output data stream (logging).
   if (opt.is_set("fluentd")) {
     auto& netloc = opt["fluentd"];
