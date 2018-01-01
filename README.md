@@ -34,7 +34,7 @@ Options:
 Getting started
 ----------
 
-### Case 1: Sending DNS transaction logs from network interface `eth0` to fluentd on `localhost` and port `24224`
+### Use case 1: Sending DNS transaction logs from network interface `eth0` to fluentd on `localhost` and port `24224`
 
 
 ```shell
@@ -78,7 +78,7 @@ Then, fluentd receives following logs.
 
 (Pretty printed for readability)
 
-### Case 2: Printing DNS transaction logs from `eth0` to stdout
+### Use case 2: Printing DNS transaction logs from `eth0` to stdout
 
 ```shell
 $ dns-gazer -i eth0 -t -
@@ -90,7 +90,7 @@ Then, output following logs to stdout.
 2015-10-11T02:40:12+00:00	dns-gazer.dns.tx	{"client_addr": "10.139.96.169", "client_port": 53684, "query": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}], "query_ts": 1.44453e+09, "reply": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}, {"data": "23.100.102.231", "name": "bf-pro-front.cloudapp.net.", "section": "answer", "type": "A"}], "reply_ts": 1.44453e+09, "server_addr": "210.196.3.183", "server_port": 53, "status": "success", "tx_id": 23904}
 ```
 
-### Case 3: Printing not only DNS transaction logs but also "record logs" from `eth0` to stdout
+### Use case 3: Printing not only DNS transaction logs but also "record logs" from `eth0` to stdout
 
 "Record log" means logs per DNS record. dns-gazer splits a DNS query/reply to multiple records by `-R` optoin. The record logs are for log managemennt system based on non-nested dictionary data type, such as Graylog. The record logs don't have nested dictionary and array.
 
