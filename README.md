@@ -1,7 +1,15 @@
 DNS Gazer
 ============
 
-Passive DNS packet analysis and logging tool.
+DNS Gazer is a passive DNS packet analysis and logging tool. From security operation view, DNS query and reply logs are important to detect and investigate a security incidnet. An attacker who compromised the system use an unique and strange domain name. Tehse domain names are often shared as IOC (Indicator Of Compromise). Then,
+
+- A security operator can detect malware infection, trojan activity and so on by comparing domain names that are appeared in internal DNS query/reply logs and shared ones.
+- Some malware uses DNS query to communicate with C2 (Command & Control) server. A security operator can find out which host communicates with C2 server in incident response.
+
+To gathering DNS query and reply logs, DNS Gazer has following advantages.
+
+- Not only storing log to local file, but also continuously sending logs to [fluentd](https://www.fluentd.org/). 
+- Support both of a "transaction log" including query + reply and a "record log" that is extracted from DNS packet as indivisual record of each DNS section (Qeustion, Answer, etc.)
 
 Usage
 --------
@@ -23,10 +31,10 @@ Options:
   -v                    Show version
 ```
 
-Quick start
+Getting started
 ----------
 
-### Case 1: Sending `eth0` DNS transaction logs to fluentd on `localhost` and port `24224`
+### Case 1: Sending DNS transaction logs from network interface `eth0` to fluentd on `localhost` and port `24224`
 
 
 ```shell
@@ -70,25 +78,27 @@ Then, fluentd receives following logs.
 
 (Pretty printed for readability)
 
-### Case 2: Printing `eth0` DNS transaction logs to stdout
+### Case 2: Printing DNS transaction logs from `eth0` to stdout
 
 ```shell
 $ dns-gazer -i eth0 -t -
 ```
 
-Then, output logs to stdout.
+Then, output following logs to stdout.
 
 ```
 2015-10-11T02:40:12+00:00	dns-gazer.dns.tx	{"client_addr": "10.139.96.169", "client_port": 53684, "query": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}], "query_ts": 1.44453e+09, "reply": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}, {"data": "23.100.102.231", "name": "bf-pro-front.cloudapp.net.", "section": "answer", "type": "A"}], "reply_ts": 1.44453e+09, "server_addr": "210.196.3.183", "server_port": 53, "status": "success", "tx_id": 23904}
 ```
 
-### Printing `captured.pcap` and output record logs to 
+### Case 3: Printing not only DNS transaction logs but also "record logs" from `eth0` to stdout
 
-"record log" means logs per DNS record. dns-gazer splits a DNS query/reply to multiple records by `-R` optoin. 
+"Record log" means logs per DNS record. dns-gazer splits a DNS query/reply to multiple records by `-R` optoin. The record logs are for log managemennt system based on non-nested dictionary data type, such as Graylog. The record logs don't have nested dictionary and array.
 
 ```shell
 $ dns-gazer -r captured.pcap -R -t -
 ```
+
+Then, output flowwing logs to stdout.
 
 ```
 2015-10-11T02:40:12+00:00	dns-gazer.dns.record	{"client_addr": "10.139.96.169", "client_port": 53684, "msg_type": "query", "name": "bf-pro-front.cloudapp.net.", "section": "question", "server_addr": "210.196.3.183", "server_port": 53, "tx_id": 23904, "type": "A"}
@@ -116,7 +126,7 @@ Setup
 ### Build & install
 
 ```shell
-$ git clone --recurse-submodules git@ghe.ckpd.co:mizutani/dns-gazer.git
+$ git clone --recurse-submodules git@github.com:m-mizutani/dns-gazer.git
 $ cd dns-gazer
 $ cmake .
 $ make
