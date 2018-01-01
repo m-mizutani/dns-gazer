@@ -15,19 +15,19 @@ Options:
   -r STRING             read pcap format file
   -i STRING             capture interface
   -f STRING             Fluentd destination, e.g. 127.0.0.1:24224
-  -o STRING             Log file path, '-' is stdout
+  -o STRING             Output to a file as msgpack foramt, '-' is stdout
+  -t STRING             Output to a file as text foramt, '-' is stdout
+  -p STRING             pid file path
+  -d                    Enable demon mode
+  -R                    Enable logging per record
   -v                    Show version
 ```
 
 Quick start
 ----------
 
-Assume following,
+### Case 1: Sending `eth0` DNS transaction logs to fluentd on `localhost` and port `24224`
 
-- You have fluentd process on `localhost` and port `24224`
-- You want to monitor on network interface `eth0`
-
-Then,
 
 ```shell
 $ dns-gazer -i eth0 -f localhost:24224
@@ -37,33 +37,66 @@ Then, fluentd receives following logs.
 
 ```
 2017-12-21 17:58:00.000000000 +0900 dns-gazer.dns.tx: {
-  "client_addr": "192.168.102.48",
-  "client_port": 7241,
-  "query": {
-    "0": {
-      "name": "aws.amazon.com.",
+  "client_addr": "10.139.96.169",
+  "client_port": 53684,
+  "query": [
+    {
+      "name": "bf-pro-front.cloudapp.net.",
       "section": "question",
       "type": "A"
     }
-  },
-  "query_ts": 1513846680.229464,
-  "reply": {
-    "0": {
-      "data": "54.239.26.209",
-      "name": "aws.amazon.com.",
+  ],
+  "query_ts": 1444531212.628222,
+  "reply": [
+    {
+      "name": "bf-pro-front.cloudapp.net.",
+      "section": "question",
+      "type": "A"
+    },
+    {
+      "data": "23.100.102.231",
+      "name": "bf-pro-front.cloudapp.net.",
       "section": "answer",
       "type": "A"
     }
-  },
-  "reply_ts": 1513846680.232027,
-  "server_addr": "192.168.100.32",
+  ],
+  "reply_ts": 1444531212.643494,
+  "server_addr": "210.196.3.183",
   "server_port": 53,
   "status": "success",
-  "tx_id": 30826
+  "tx_id": 23904
 }
 ```
 
 (Pretty printed for readability)
+
+### Case 2: Printing `eth0` DNS transaction logs to stdout
+
+```shell
+$ dns-gazer -i eth0 -t -
+```
+
+Then, output logs to stdout.
+
+```
+2015-10-11T02:40:12+00:00	dns-gazer.dns.tx	{"client_addr": "10.139.96.169", "client_port": 53684, "query": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}], "query_ts": 1.44453e+09, "reply": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}, {"data": "23.100.102.231", "name": "bf-pro-front.cloudapp.net.", "section": "answer", "type": "A"}], "reply_ts": 1.44453e+09, "server_addr": "210.196.3.183", "server_port": 53, "status": "success", "tx_id": 23904}
+```
+
+### Printing `captured.pcap` and output record logs to 
+
+"record log" means logs per DNS record. dns-gazer splits a DNS query/reply to multiple records by `-R` optoin. 
+
+```shell
+$ dns-gazer -r captured.pcap -R -t -
+```
+
+```
+2015-10-11T02:40:12+00:00	dns-gazer.dns.record	{"client_addr": "10.139.96.169", "client_port": 53684, "msg_type": "query", "name": "bf-pro-front.cloudapp.net.", "section": "question", "server_addr": "210.196.3.183", "server_port": 53, "tx_id": 23904, "type": "A"}
+2015-10-11T02:40:12+00:00	dns-gazer.dns.tx	{"client_addr": "10.139.96.169", "client_port": 53684, "query": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}], "query_ts": 1.44453e+09, "reply": [{"name": "bf-pro-front.cloudapp.net.", "section": "question", "type": "A"}, {"data": "23.100.102.231", "name": "bf-pro-front.cloudapp.net.", "section": "answer", "type": "A"}], "reply_ts": 1.44453e+09, "server_addr": "210.196.3.183", "server_port": 53, "status": "success", "tx_id": 23904}
+2015-10-11T02:40:12+00:00	dns-gazer.dns.record	{"client_addr": "10.139.96.169", "client_port": 53684, "msg_type": "reply", "name": "bf-pro-front.cloudapp.net.", "section": "question", "server_addr": "210.196.3.183", "server_port": 53, "tx_id": 23904, "type": "A"}
+2015-10-11T02:40:12+00:00	dns-gazer.dns.record	{"client_addr": "10.139.96.169", "client_port": 53684, "data": "23.100.102.231", "msg_type": "reply", "name": "bf-pro-front.cloudapp.net.", "section": "answer", "server_addr": "210.196.3.183", "server_port": 53, "tx_id": 23904, "type": "A"}
+
+```
 
 
 Setup
@@ -80,7 +113,7 @@ Setup
 - libpcap >= 1.7.4
 - libmsgpack >= 0.5.9
 
-### build
+### Build & install
 
 ```shell
 $ git clone --recurse-submodules git@ghe.ckpd.co:mizutani/dns-gazer.git

@@ -65,6 +65,7 @@ void Receiver::log_record(fluent::Logger *logger, const pm::Property& p,
         auto msg = logger->retain_message("dns-gazer.dns.record");
         auto is_query = (p.value(pks.is_query_).uint() == 1);
 
+        msg->set_ts(p.ts());
         msg->set("tx_id", p.value(pks.tx_id_).uint());
         msg->set("section", tgt->name_);
         msg->set("name", rec.find("name").repr());
