@@ -66,6 +66,7 @@ class Receiver {
   
  public:
   Receiver(const pm::Machine& machine, fluent::Logger* logger);
+  ~Receiver();
   void recv(const pm::Property& p);
   bool logging_record() const { return this->logging_record_; }
   void set_logging_record(bool v) { this->logging_record_ = v; }

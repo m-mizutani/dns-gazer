@@ -108,7 +108,17 @@ Receiver::Receiver(const pm::Machine& machine, fluent::Logger *logger) :
   this->targets_.push_back(new Target(machine, "DNS.additional"));
 }
 
+Receiver::~Receiver() {
+  for (auto tgt : this->targets_) {
+    delete tgt;
+  }
 
+  this->cache_.wipe();
+  while (this->cache_.has_expired()) {
+    auto msg = this->cache_.pop_expired();
+    this->logger_->emit(msg);
+  }
+}
 
 void Receiver::recv(const pm::Property& p) {
   static const int TIMEOUT = 60;
