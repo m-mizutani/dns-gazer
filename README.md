@@ -1,7 +1,7 @@
 DNS Gazer
 ============
 
-DNS Gazer is a passive DNS packet analysis and logging tool. From security operation view, DNS query and reply logs are important to detect and investigate a security incidnet. An attacker who compromised the system use an unique and strange domain name. Tehse domain names are often shared as IOC (Indicator Of Compromise). Then,
+DNS Gazer is a passive DNS packet analysis and logging tool for security monitoring. From security operation view, DNS query and reply logs are important to detect and investigate a security incidnet. An attacker who compromised the system use an unique and strange domain name. Tehse domain names are often shared as IOC (Indicator Of Compromise). Then,
 
 - A security operator can detect malware infection, trojan activity and so on by comparing domain names that are appeared in internal DNS query/reply logs and shared ones.
 - Some malware uses DNS query to communicate with C2 (Command & Control) server. A security operator can find out which host communicates with C2 server in incident response.
