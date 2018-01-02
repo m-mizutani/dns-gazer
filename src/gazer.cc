@@ -36,8 +36,9 @@ int main(int argc, char* argv[]) {
     gazer::demonize();
   }
 
-  
-  auto machine = new pm::Machine();
+  pm::Config config;
+  config.set_false("TCP.enable_session_mgmt");  
+  auto machine = new pm::Machine(config);
   auto logger = new fluent::Logger();
 
   
