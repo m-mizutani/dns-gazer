@@ -108,8 +108,26 @@ Then, output flowwing logs to stdout.
 
 ```
 
+Setup (Docker image)
+----------
 
-Setup
+DNS gazer docker images is available by this [Dockerfile](https://github.com/m-mizutani/dns-gazer-docker-image) at [mztn/dns-gazer](https://hub.docker.com/r/mztn/dns-gazer/)
+
+### Requirements
+
+- Environment variables
+  - DEVICE: Specify monitoring device, such as eth0. That will be passed to `-i` option.
+  - FLUENTD_ADDRESS: Destination of fluentd forward input plugin, e.g. 127.0.0.1:24224 That will be passed to `-f` option.
+- network
+  - `--net=host` is required because the docker container need to monitor network interface directly.
+  
+### Example
+
+```
+$ docker run --net=host -e DEVICE=eth0 -e FLUENTD_ADDRESS=localhost:24224 mztn/dns-gazer
+```
+
+Setup (Build source code)
 ----------
 
 
@@ -138,7 +156,5 @@ If you have extra third party package directory (such as HomeBrew) and required 
 ```shell
 $ cmake -DINC_DIR=/opt/include -DLIB_DIR=/opt/lib .
 ```
-
-
 
 
